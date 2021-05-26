@@ -220,15 +220,14 @@ void drawGraph ( HDC hdc, double** matrix )
 
                                 }
                                 else {
+                                    LineTo( hdc, nx[j], ny[j] );
                                     if ( matrix[j][i] )
                                         if ( i - j < 0 ) {
                                             pt[1].x = nx[i] + 20;
                                             pt[1].y = ny[i] - oneLen;
-                                            LineTo( hdc, nx[j], ny[j] );
                                         }
                                     else{
                                         printWeight(hdc,matrix[i][j],centerC(nx[i],nx[j]), centerC(ny[i], ny[j]));
-                                        LineTo( hdc, nx[j], ny[j] );
                                     }
                                 }
                             }

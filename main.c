@@ -14,6 +14,14 @@ int visited[numb] = {};
 int thisOne = -1;
 int check = 0;
 
+int centerC ( int coord1, int coord2 )
+{
+    int res;
+    if ( coord1 >= coord2 ) res = coord1 - (coord1 - coord2)/2;
+    else res = coord2 - (coord2 - coord1)/2;
+    return res;
+}
+
 void pausa ( HWND* hWnd )
 {
     printf("\nClick to continue\n");
@@ -119,9 +127,11 @@ void drawGraph ( HDC hdc, double** matrix )
                                             else
                                                 pt[1].y = ny[i] + oneLen;
                                         }
+                                        printWeight(hdc,matrix[i][j],pt[1].x,pt[1].y);
                                         Polyline(hdc,pt,3);
                                         break;
                                     default:
+                                        printWeight(hdc,matrix[i][j],centerC(nx[i],nx[j]), centerC(ny[i], ny[j]));
                                         LineTo( hdc, nx[j], ny[j] );
                                         break;
                                     }
@@ -200,9 +210,11 @@ void drawGraph ( HDC hdc, double** matrix )
                                             }
                                             break;
                                         }
+                                        printWeight(hdc,matrix[i][j],pt[1].x,pt[1].y);
                                         Polyline(hdc,pt,3);
                                     }
                                     else {
+                                        printWeight(hdc,matrix[i][j],centerC(nx[i],nx[j]), centerC(ny[i], ny[j]));
                                         LineTo( hdc, nx[j], ny[j] );
                                     }
 
@@ -214,13 +226,17 @@ void drawGraph ( HDC hdc, double** matrix )
                                             pt[1].y = ny[i] - oneLen;
                                             LineTo( hdc, nx[j], ny[j] );
                                         }
-                                    else
+                                    else{
+                                        printWeight(hdc,matrix[i][j],centerC(nx[i],nx[j]), centerC(ny[i], ny[j]));
                                         LineTo( hdc, nx[j], ny[j] );
+                                    }
                                 }
                             }
                         }
-                        else
+                        else {
+                            printWeight(hdc,matrix[i][j],centerC(nx[i],nx[j]), centerC(ny[i], ny[j]));
                             LineTo( hdc, nx[j], ny[j] );
+                        }
 
                     }
                 }
@@ -241,6 +257,33 @@ void printMatrix ( double** matrix, int rows, int cols ) {
             printf("%.0f\t", matrix[i][j]);
         printf("\n");
     }
+}
+
+void printWeight ( HDC hdc, double weight, int x, int y )
+{
+    int len;
+    int numbe = weight;
+    if ( numbe < 10 ) len = 1;
+    else if ( numbe < 100 ) len = 2;
+    else if ( numbe < 1000 ) len = 3;
+    else len = 4;
+    char* buf;
+    buf = (char *)malloc(10 * sizeof(char));
+    int v = 0;
+    while ( numbe > 9 ) {
+        buf[v++] = (numbe % 10) + '0';
+        numbe = numbe / 10;
+    }
+    buf[v++] = numbe + '0';
+    buf[v] = '\0';
+    char t;
+    for (int i = 0; i < v / 2; i++)
+    {
+        t = buf[i];
+        buf[i] = buf[v - 1 - i];
+        buf[v - 1 - i] = t;
+    }
+    TextOut ( hdc, x, y, buf, len );
 }
 
 void generateMatrixes (  )
